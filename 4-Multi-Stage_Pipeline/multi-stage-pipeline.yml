@@ -1,0 +1,119 @@
+trigger:
+      - ""
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+stages:
+  # Stage 1: Build
+  - stage: Build
+    displayName: 'Build and Test'
+    jobs:
+      - job: BuildAndTest
+        displayName: 'Build and Test Node.js App'
+        steps:
+          - task: Checkout@1
+            displayName: 'Checkout Code'
+
+          - task: UseNode@1
+            inputs:
+              versionSpec: '16.x'
+            displayName: 'Set up Node.js'
+
+          - script: |
+              npm install
+            displayName: 'Install Dependencies'
+
+          - script: |
+              npm test
+            displayName: 'Run Tests'
+
+          - task: PublishBuildArtifacts@1
+            inputs:
+              pathToPublish: '$(Build.ArtifactStagingDirectory)'
+              artifactName: 'drop'
+              publishLocation: 'Container'
+            displayName: 'Publish Artifacts'
+
+  # Stage 2: Deploy to Dev
+  - stage: DeployToDev
+    displayName: 'Deploy to Dev'
+    dependsOn: Build
+    condition: succeeded()
+    jobs:
+      - job: DeployDev
+        displayName: 'Deploy to Dev Environment'
+        steps:
+          - task: DownloadBuildArtifacts@0
+            inputs:
+              artifactName: 'drop'
+            displayName: 'Download Artifacts'
+
+          - script: |
+              echo "Deploying to Dev environment"
+              curl -o dev-parameters.yml https://ABB-DevOps-exercise/environments/dev-parameters.yml
+              apiUrl=$(yq eval '.parameters.apiUrl' dev-parameters.yml)
+              dbConnectionString=$(yq eval '.parameters.dbConnectionString' dev-parameters.yml)
+              echo "API URL: $apiUrl"
+              echo "DB Connection String: $dbConnectionString"
+
+              # Deploy the application using Kubernetes or App Service
+              kubectl apply -f k8s/deployment.yaml
+            displayName: 'Deploy to Dev with Dev Config'
+
+  # Stage 3: Deploy to Test
+  - stage: DeployToTest
+    displayName: 'Deploy to Test'
+    dependsOn: DeployToDev  # Only run if Dev stage is successful
+    condition: succeeded()
+    jobs:
+      - job: DeployTest
+        displayName: 'Deploy to Test Environment'
+        steps:
+          - task: DownloadBuildArtifacts@0
+            inputs:
+              artifactName: 'drop'
+            displayName: 'Download Artifacts'
+
+          - script: |
+              echo "Deploying to Test environment"
+              curl -o test-parameters.yml https://ABB-DevOps-exercise/environments/test-parameters.yml
+              apiUrl=$(yq eval '.parameters.apiUrl' test-parameters.yml)
+              dbConnectionString=$(yq eval '.parameters.dbConnectionString' test-parameters.yml)
+              echo "API URL: $apiUrl"
+              echo "DB Connection String: $dbConnectionString"
+
+              # Deploy the application using Kubernetes or App Service
+              kubectl apply -f k8s/deployment.yaml
+            displayName: 'Deploy to Test with Test Config'
+
+  # Stage 4: Deploy to Prod (with Approval Gate)
+  - stage: DeployToProd
+    displayName: 'Deploy to Prod'
+    dependsOn: DeployToTest  # Only run if Test stage is successful
+    condition: succeeded()
+    jobs:
+      - job: DeployProd
+        displayName: 'Deploy to Prod Environment'
+        environment:
+          name: 'Production'
+          resourceType: 'AzureWebApp'
+          approvers:
+            - 'approver-email@example.com'  
+        steps:
+          - task: DownloadBuildArtifacts@0
+            inputs:
+              artifactName: 'drop'
+            displayName: 'Download Artifacts'
+
+          - script: |
+              echo "Deploying to Prod environment"
+              curl -o prod-parameters.yml https://ABB-DevOps-exercise/environments/prod-parameters.yml
+              apiUrl=$(yq eval '.parameters.apiUrl' prod-parameters.yml)
+              dbConnectionString=$(yq eval '.parameters.dbConnectionString' prod-parameters.yml)
+              echo "API URL: $apiUrl"
+              echo "DB Connection String: $dbConnectionString"
+
+              # Deploy the application using Kubernetes or App Service
+              kubectl apply -f k8s/deployment.yaml
+            displayName: 'Deploy to Prod with Prod Config'
