@@ -1,3 +1,3 @@
 parameters:
-  apiUrl: "https://dev-api.example.com"
+  apiUrl: "https://prod-api.example.com"
   dbConnectionString: "Server=dev-db.example.com;Database=myapp;User Id=myuser;Password=mypassword;"
