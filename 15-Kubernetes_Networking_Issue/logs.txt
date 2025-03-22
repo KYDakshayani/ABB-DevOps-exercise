@@ -1,0 +1,35 @@
+Kubectl logs
+
+2023-03-22T12:34:56.789Z    INFO    Starting application...
+2023-03-22T12:34:57.123Z    ERROR   Failed to connect to external API: Timeout occurred
+2023-03-22T12:34:58.456Z    ERROR   Retrying connection to external API: Timeout occurred
+
+
+kubectl describe
+
+Name:           ubuntuapp
+Namespace:      default
+Node:           aks-node01/10.0.0.1
+Containers:
+  myapp-container:
+    Container ID:   f2bosubcr.azurecr.io
+    Image:          ubuntu-image:1.0.0
+    Ports:          80/TCP
+    State:          Running
+    Ready:          True
+    Restart Count:  0
+    Environment:
+      API_URL:  https://example.com
+Conditions:
+  Type             Status
+  PodScheduled     True
+  Ready            True
+  ContainersReady  True
+  Initialized      True
+Events:
+  Type    Reason     Age   From                   Message
+  ----    ------     ----  ----                   -------
+  Normal  Scheduled  10m   default-scheduler      Successfully assigned default/ubuntuapp to aks-node01
+  Normal  Pulled     9m    kubelet, aks-node01    Container image "ubuntu-image:1.0.0" already present on machine
+  Normal  Created    9m    kubelet, aks-node01    Created container ubuntuapp-container
+  Normal  Started    9m    kubelet, aks-node01    Started container ubuntuapp-container

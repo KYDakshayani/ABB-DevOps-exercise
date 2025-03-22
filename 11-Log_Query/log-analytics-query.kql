@@ -1,0 +1,5 @@
+AppTraces
+| where TimeGenerated >= ago(24h)
+| where SeverityLevel == "Error"
+| summarize Count = count() by bin(TimeGenerated, 1h), Message
+| order by TimeGenerated desc

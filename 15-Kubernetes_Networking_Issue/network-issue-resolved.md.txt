@@ -1,0 +1,22 @@
+# Network Issue Resolved - AKS Pod Connectivity to External Services
+
+## Issue Description
+
+On [date], an issue was identified where pods in the AKS cluster were unable to communicate with external services (e.g., APIs, databases, external websites). The affected pods experienced timeouts and failed connection attempts when trying to reach external services.
+
+### Root Cause
+The root cause of the issue was determined to be [describe the underlying issue, e.g., restrictive network policies, misconfigured DNS settings, outbound connectivity issues, etc.].
+
+## Steps Taken to Diagnose the Issue
+
+1. Run kubectl describe on the Pod
+2. Run kubectl logs <pod-name>
+3. kubectl exec -it <pod-name> -- /bin/sh
+ 
+Check if DNS Resolution Works from Inside the Pod
+   nslookup <DNS_name>
+
+4.Verify Outbound Connectivity
+  curl <url>
+  vNET peering
+

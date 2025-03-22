@@ -1,0 +1,21 @@
+dyuser@buildvm1:~/dakshayani$ sudo docker build -t ubuntu-image .
+[+] Building 22.5s (8/8) FINISHED                                                                                       docker:default
+ => [internal] load build definition from Dockerfile                                                                              0.1s
+ => => transferring dockerfile: 552B                                                                                              0.0s
+ => [internal] load metadata for docker.io/library/ubuntu:20.04                                                                   1.2s
+ => [internal] load .dockerignore                                                                                                 0.1s
+ => => transferring context: 2B                                                                                                   0.0s
+ => [1/4] FROM docker.io/library/ubuntu:20.04@sha256:8e5c4f0285ecbb4ead070431d29b576a530d3166df73ec44affc1cd27555141b             2.3s
+ => => resolve docker.io/library/ubuntu:20.04@sha256:8e5c4f0285ecbb4ead070431d29b576a530d3166df73ec44affc1cd27555141b             0.0s
+ => => sha256:8e5c4f0285ecbb4ead070431d29b576a530d3166df73ec44affc1cd27555141b 6.69kB / 6.69kB                                    0.0s
+ => => sha256:e5a6aeef391a8a9bdaee3de6b28f393837c479d8217324a2340b64e45a81e0ef 424B / 424B                                        0.0s
+ => => sha256:6013ae1a63c2ee58a8949f03c6366a3ef6a2f386a7db27d86de2de965e9f450b 2.30kB / 2.30kB                                    0.0s
+ => => sha256:d9802f032d6798e2086607424bfe88cb8ec1d6f116e11cd99592dcaf261e9cd2 27.51MB / 27.51MB                                  0.5s
+ => => extracting sha256:d9802f032d6798e2086607424bfe88cb8ec1d6f116e11cd99592dcaf261e9cd2                                         1.5s
+ => [2/4] RUN apt-get update && apt-get install -y curl                                                                          17.0s
+ => [3/4] WORKDIR /app                                                                                                            0.2s 
+ => [4/4] RUN echo '#!/bin/bash \n echo "Hello, World!"' > /app/hello.sh && chmod +x /app/hello.sh                                0.3s 
+ => exporting to image                                                                                                            1.1s 
+ => => exporting layers                                                                                                           1.1s 
+ => => writing image sha256:4e72d18288ac7545840fb3cdcc3000560841eda2413a874813d48e94faa24124                                      0.0s 
+ => => naming to docker.io/library/ubuntu-image 

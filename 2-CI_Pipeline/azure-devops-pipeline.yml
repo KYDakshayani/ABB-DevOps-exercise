@@ -1,0 +1,48 @@
+trigger:
+      - "main"
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  buildConfiguration: 'Release'
+
+jobs:
+  - job: Build
+    displayName: 'Build and Test Node.js App'
+    steps:
+
+      # Step 1: Checkout the code
+      - task: Checkout@1
+        displayName: 'Checkout Code'
+
+      # Step 2: Set up Node.js
+      - task: UseNode@1
+        inputs:
+          versionSpec: '16.x'
+        displayName: 'Set up Node.js'
+
+      # Step 3: Install dependencies
+      - script: |
+          npm install
+        displayName: 'Install Dependencies'
+
+      # Step 4: Run Unit Tests
+      - script: |
+          npm test
+        displayName: 'Run Unit Tests'
+        
+      # Step 5: Publish Test Results
+      - task: PublishTestResults@2
+        inputs:
+          testResultsFiles: '**/test-reports/junit.xml'
+          testRunTitle: 'Unit Tests'
+          mergeTestResults: true
+        displayName: 'Publish Test Results'
+
+      # Step 6: Publish Artifacts
+      - task: PublishBuildArtifacts@1
+        inputs:
+          pathToPublish: '$(Build.ArtifactStagingDirectory)'
+          artifactName: 'drop'
+          publishLocation: 'Container'
+        displayName: 'Publish Artifacts'

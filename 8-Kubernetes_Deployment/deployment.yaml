@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ubuntuapp-deployment
+  labels:
+    app: ubuntuapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ubuntuapp
+  template:
+    metadata:
+      labels:
+        app: ubuntuapp
+    spec:
+      containers:
+      - name: ubuntuapp-container
+        image: f2bosubcr.azurecr.io/ubuntu-image:1.0.0
+        ports:
+        - containerPort: 80
+        command:
+          - "tail"
+          - "-f"
+          - "/dev/null"
+        command:
+          - "tail"
+          - "-f"
+          - "/dev/null"
+        readinessProbe:
+          exec:
+            command:
+              - "echo"
+              - "Hello, World!"
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          failureThreshold: 3
+        livenessProbe:
+          exec:
+            command:
+              - "echo"
+              - "Hello, World!"
+          initialDelaySeconds: 15
+          periodSeconds: 5
+          failureThreshold: 3

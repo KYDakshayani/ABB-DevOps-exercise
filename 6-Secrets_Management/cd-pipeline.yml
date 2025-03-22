@@ -1,0 +1,18 @@
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: AzureKeyVault@2
+  inputs:
+    azureSubscription: '<Service-Connection-Name>'
+    KeyVaultName: 'f2bosubkv2'
+    SecretsFilter: '*'
+    RunAsPreJob: true
+
+- script: |
+    SECRET=$(az keyvault secret show --name INPUTTPassword --vault-name f2bosubkv2 --query "value" -o tsv)
+    echo "Secret retrieved: $(SECRET)"
+    displayName: 'Use secret during deployment'
